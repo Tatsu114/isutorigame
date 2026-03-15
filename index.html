@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>電車の椅子取りゲーム</title>
+
+<style>
+body{
+font-family:sans-serif;
+text-align:center;
+}
+
+#train{
+display:flex;
+justify-content:center;
+margin-top:30px;
+}
+
+.seat{
+width:60px;
+height:60px;
+margin:10px;
+background:#90EE90;
+border:2px solid #333;
+cursor:pointer;
+}
+
+.taken{
+background:#ff6b6b;
+cursor:not-allowed;
+}
+</style>
+</head>
+
+<body>
+
+<h1>電車の椅子取りゲーム 🚃</h1>
+<p>空いている席をクリック！</p>
+
+<div id="train"></div>
+
+<p id="message"></p>
+
+<script>
+
+const seatCount = 10;
+const train = document.getElementById("train");
+const message = document.getElementById("message");
+
+let takenSeats = 0;
+
+for(let i=0;i<seatCount;i++){
+
+let seat=document.createElement("div");
+seat.className="seat";
+
+seat.onclick=function(){
+
+if(seat.classList.contains("taken")) return;
+
+seat.classList.add("taken");
+
+takenSeats++;
+
+if(takenSeats===seatCount){
+message.textContent="満席！ゲーム終了！";
+}
+
+};
+
+train.appendChild(seat);
+
+}
+
+</script>
+
+</body>
+</html>
