@@ -2,34 +2,29 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>通勤ラッシュ椅子取りゲーム</title>
+<title>椅子取りゲーム（対戦版）</title>
 
 <style>
-
 body{
 font-family:sans-serif;
 text-align:center;
 background:#f0f0f0;
 }
 
-h1{
-margin-top:20px;
-}
-
 #train{
 display:grid;
-grid-template-columns:repeat(5,70px);
-gap:10px;
+grid-template-columns:repeat(3,80px);
+gap:12px;
 justify-content:center;
 margin-top:30px;
 }
 
 .seat{
-width:70px;
-height:70px;
+width:80px;
+height:80px;
 background:#8fd18f;
 border:3px solid #333;
-border-radius:10px;
+border-radius:12px;
 font-size:30px;
 display:flex;
 align-items:center;
@@ -46,9 +41,9 @@ cursor:not-allowed;
 background:#4da6ff;
 }
 
-#message{
-font-size:20px;
+#info{
 margin-top:20px;
+font-size:18px;
 }
 
 button{
@@ -56,32 +51,34 @@ margin-top:20px;
 padding:10px 20px;
 font-size:16px;
 }
-
 </style>
 </head>
 
 <body>
 
-<h1>🚃 通勤ラッシュ椅子取りゲーム</h1>
-<p>早くタップして席を確保！</p>
+<h1>🚃 椅子取り対戦ゲーム</h1>
+<p>先に5席取った方が勝ち！</p>
 
 <div id="train"></div>
 
-<div id="message"></div>
+<div id="info"></div>
 
 <button onclick="startGame()">ゲーム開始</button>
 
 <script>
 
-const seatCount=10
-let seats=[]
+const seatCount = 9
+const winCount = 5
+
+let seats = []
+let playerScore = 0
+let npcScore = 0
 let npcInterval
 
 function createSeats(){
 
 const train=document.getElementById("train")
 train.innerHTML=""
-
 seats=[]
 
 for(let i=0;i<seatCount;i++){
@@ -96,7 +93,10 @@ if(seat.classList.contains("taken")) return
 seat.classList.add("taken","player")
 seat.textContent="😀"
 
-endGame("席ゲット！あなたの勝ち！")
+playerScore++
+updateInfo()
+
+checkWin()
 
 }
 
@@ -112,11 +112,8 @@ function npcSit(){
 let emptySeats=seats.filter(s=>!s.classList.contains("taken"))
 
 if(emptySeats.length===0){
-
-endGame("満席…座れなかった！")
-
+checkWin()
 return
-
 }
 
 let seat=emptySeats[Math.floor(Math.random()*emptySeats.length)]
@@ -124,17 +121,40 @@ let seat=emptySeats[Math.floor(Math.random()*emptySeats.length)]
 seat.classList.add("taken")
 seat.textContent="🧍"
 
+npcScore++
+updateInfo()
+
+checkWin()
+
+}
+
+function updateInfo(){
+document.getElementById("info").textContent =
+`あなた：${playerScore}席　NPC：${npcScore}席`
+}
+
+function checkWin(){
+
+if(playerScore >= winCount){
+endGame("🎉 あなたの勝ち！")
+}
+
+else if(npcScore >= winCount){
+endGame("😢 NPCの勝ち…")
+}
+
 }
 
 function startGame(){
 
-createSeats()
+playerScore = 0
+npcScore = 0
 
-document.getElementById("message").textContent="席を急いでタップ！"
+createSeats()
+updateInfo()
 
 clearInterval(npcInterval)
-
-npcInterval=setInterval(npcSit,800)
+npcInterval = setInterval(npcSit, 900)
 
 }
 
@@ -142,11 +162,12 @@ function endGame(text){
 
 clearInterval(npcInterval)
 
-document.getElementById("message").textContent=text
+document.getElementById("info").textContent += "　" + text
 
 }
 
 createSeats()
+updateInfo()
 
 </script>
 
